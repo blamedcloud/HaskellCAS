@@ -10,9 +10,9 @@ derivativeWRT x (Var y)
     | otherwise                   = Const 0
 derivativeWRT x (Const c)         = Const 0
 -- product rule (ab' + a'b)
-derivativeWRT x (a :*: b)         = (a :*: (derivativeWRT x b)) :+: ((derivativeWRT x a) :*: b)
+derivativeWRT x (a :*: b)         = a :*: (derivativeWRT x b) :+: (derivativeWRT x a) :*: b
 -- power rule (n * a^(n-1) * a') 
-derivativeWRT x (a :^: (Const c)) = ((Const c) :*: (a :^: (Const $ c-1))) :*: (derivativeWRT x a)
+derivativeWRT x (a :^: (Const c)) = Const c :*: (a :^: (Const $ c-1)) :*: (derivativeWRT x a)
 --power rule for rational exponents:
 derivativeWRT x (a :^: (Const n :/: Const d)) = (Const n :/: Const d) 
                                                 :*:
@@ -35,7 +35,7 @@ derivativeWRT x (Cot a)           = (negate' ((Csc a) :^: (Const 2))) :*: (deriv
 
 -- logarithmic derivative rule: ( f  = g^h )
 --                              ( f' = g^h*h'*ln(g) + g^(h-1)*h*g' )
-derivativeWRT x f@(g :^: h) = f :*: h' :*: Ln (g) :+: (g :^: (g :+: Const (-1))) :*: h :*: g' 
+derivativeWRT x f@(g :^: h) = f :*: h' :*: Ln (g) :+: (g :^: (h :+: Const (-1))) :*: h :*: g' 
     where h' = derivativeWRT x h
           g' = derivativeWRT x g
 
