@@ -19,7 +19,6 @@ derivativeWRT x (a :^: (Const n :/: Const d)) = (Const n :/: Const d)
                                                 (a :^: ((Const n :+: (negate' (Const d))) :/: Const d))
                                                 :*:
                                                 (derivativeWRT x a)
-
 derivativeWRT x (a :+: b)         = (derivativeWRT x a) :+: (derivativeWRT x b)
 -- quotient rule ( (a'b - b'a) / b^2 )
 derivativeWRT x (a :/: b)         = (((derivativeWRT x a) :*: b) :+: (negate' ((derivativeWRT x b) :*: a)))
@@ -33,6 +32,13 @@ derivativeWRT x (Tan a)           = ((Sec a) :^: (Const 2)) :*: (derivativeWRT x
 derivativeWRT x (Sec a)           = (Sec a) :*: (Tan a) :*: (derivativeWRT x a)
 derivativeWRT x (Csc a)           = (negate' (Csc a)) :*: (Cot a) :*: (derivativeWRT x a)
 derivativeWRT x (Cot a)           = (negate' ((Csc a) :^: (Const 2))) :*: (derivativeWRT x a)
+
+-- logarithmic derivative rule: ( f  = g^h )
+--                              ( f' = g^h*h'*ln(g) + g^(h-1)*h*g' )
+derivativeWRT x f@(g :^: h) = f :*: h' :*: Ln (g) :+: (g :^: (g :+: Const (-1))) :*: h :*: g' 
+    where h' = derivativeWRT x h
+          g' = derivativeWRT x g
+
 derivativeWRT x otherExpr         = error "Derivative rule not implemented... Sorry"
 -- add more derivative rules ... (like x^x)
 

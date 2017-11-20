@@ -18,6 +18,8 @@ simplify ((c :^: Const b) :^: Const a) = c :^: (Const (a*b))
 
 simplify ((a :^: Const b) :*: (c :^: Const d))
                                  | a == c = ((simplify a) :^: (Const $ b+d))
+simplify ((a :^: b) :*: c)
+                                 | a == c = ((simplify a) :^: (simplify (b :+: Const 1)))
 
 simplify (Const a :+: (Const b :+: expr)) = (Const $ a+b) :+: (simplify expr)
 simplify (Const a :+: expr :+: Const b)   = (Const $ a+b) :+: (simplify expr)
