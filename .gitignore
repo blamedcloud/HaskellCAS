@@ -22,3 +22,6 @@ cabal.project.local
 
 # Ignore testing file
 Testing.hs
+
+# vim .swp files
+*.swp
